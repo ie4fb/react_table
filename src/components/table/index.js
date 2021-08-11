@@ -118,10 +118,19 @@ export default function Table({ rawData }) {
     // Вычисляем разницу с предыдущим днем
     console.log(tableItems);
     tableItems.forEach((tableItem) => {
-        tableItem.data.forEach((dataItem, index) => {
-            
-        })
-    })
+      tableItem.data.forEach((dataItem, index) => {
+        if (tableItem.data[index - 1]) {
+          Object.keys(dataItem).forEach((key) => {
+
+            if(dataItem[key].value && tableItem.data[index-1].[key].value) {
+                dataItem[key].difference = tableItem.data[index-1].[key].value - dataItem[key].value
+            }
+          });
+        }
+      });
+    });
+
+    console.log(tableItems);
 
     setItems(tableItems);
   }, [data]);
