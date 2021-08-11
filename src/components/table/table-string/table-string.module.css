@@ -1,0 +1,30 @@
+.container {
+    background-color: #FFF;
+}
+.container:nth-of-type(2n) {
+    background-color: #F3F3f3;
+}
+.cell:first-of-type {
+    text-align: left;
+}
+.cell {
+    text-align: center;
+}
+.data {
+    text-align: center;
+    flex-direction: column;
+    display: inline-block;
+    min-height: 90px;
+}
+.item {
+    margin: 0;
+    display: flex;
+}
+.item_heading_y {
+    color: #dc3545;
+    font-weight: bold;
+}
+.item_heading_g {
+    color: #1f85ab;
+    font-weight: bold;
+}
