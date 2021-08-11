@@ -5,6 +5,11 @@ import TableRow from './table-string';
 export default function Table({ rawData }) {
   const [data, setData] = useState([]);
   const [items, setItems] = useState([]);
+  const [reverse, setReverse] = useState(false);
+
+  const toggleReverse = () => {
+    setReverse(prevState => !prevState);
+  };
 
   useEffect(() => {
     const dataArray = [];
@@ -27,7 +32,9 @@ export default function Table({ rawData }) {
     anchorKeys = Array.from(new Set(anchorKeys));
 
     // Сортируем
-    anchorKeys.sort((a, b) => (a.name > b.name ? 1 : b.name > a.name ? -1 : 0));
+    anchorKeys.sort((a, b) =>
+      a > b ? (reverse ? -1 : 1) : b > a ? (reverse ? 1 : -1) : 0
+    );
 
     // Составляем массив со всеми датами и убираем дубли
     const datesArray = Array.from(new Set(data.map((item) => item.created_at)));
@@ -116,24 +123,23 @@ export default function Table({ rawData }) {
     });
 
     // Вычисляем разницу с предыдущим днем
-    console.log(tableItems);
     tableItems.forEach((tableItem) => {
       tableItem.data.forEach((dataItem, index) => {
         if (tableItem.data[index - 1]) {
           Object.keys(dataItem).forEach((key) => {
-
-            if(dataItem[key].value && tableItem.data[index-1].[key].value) {
-                dataItem[key].difference = tableItem.data[index-1].[key].value - dataItem[key].value
+            if (dataItem[key].value && tableItem.data[index - 1][key].value) {
+              dataItem[key].difference =
+                tableItem.data[index - 1][key].value - dataItem[key].value;
             }
           });
         }
       });
     });
 
-    console.log(tableItems);
+    // Вычисляем видимость
 
     setItems(tableItems);
-  }, [data]);
+  }, [data, reverse]);
 
   useEffect(() => {
     //  console.log(items);
@@ -143,7 +149,9 @@ export default function Table({ rawData }) {
     <table className={styles.container}>
       <thead>
         <tr className={styles.heading_container}>
-          <th className={styles.heading}>Анкор</th>
+          <th className={styles.heading} onClick={toggleReverse}>
+            Анкор
+          </th>
           {items[0] &&
             items[0].data.map((item) => (
               <th className={styles.heading}>{item.date}</th>

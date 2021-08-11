@@ -18,7 +18,8 @@
 }
 .heading:first-of-type {
   min-width: 200px;
+  cursor: pointer;
 }
 .body {
-    
+
 }
