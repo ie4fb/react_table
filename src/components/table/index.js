@@ -8,12 +8,15 @@ export default function Table({ rawData }) {
   const [isNamesSortAsc, setIsNamesSortAsc] = useState(true);
   const [isSortSelectorVisible, setIsSortSelectorVisible] = useState(false);
   const [isDateSortIngAsc, setIsDateSortIngAsc] = useState(false);
+  const [selectedDateIndex, setSelectedDateIndex] = useState('');
   const [sortSelectorCoordinates, setSortSelectorCoordinates] = useState({
     x: 0,
     y: 0,
   });
+  const [visibility, setVisibility] = useState(null);
 
   const toggleSort = (props, e) => {
+    setIsSortSelectorVisible(false);
     const arr = items;
     if (props.sortBy === 'name') {
       arr.sort((a, b) =>
@@ -30,21 +33,32 @@ export default function Table({ rawData }) {
       setItems(arr);
       setIsNamesSortAsc((prevState) => !prevState);
     } else if (props.sortBy === 'date') {
-      const index = e.target.id.split(',')[0];
-      const date = e.target.id.split(',')[1];
-      console.log(index, date);
-      console.log(items);
-      console.log(
-        arr[0].data[index].yandexDesktop.value.number,
-          arr[2].data[index].yandexDesktop.value.number
-      );
+        console.log(props)
+        console.log(arr); 
       arr.sort((a, b) =>
-        a.data[index].yandexDesktop.value.number > b.data[index].yandexDesktop.value.number
+        parseInt(
+          a.data[selectedDateIndex][props.sortingKey].value.number
+            .toString()
+            .split('+')[0]
+        ) >
+        parseInt(
+          b.data[selectedDateIndex][props.sortingKey].value.number
+            .toString()
+            .split('+')[0]
+        )
           ? isDateSortIngAsc
             ? -1
             : 1
-          : b.data[index].yandexDesktop.value.number >
-            a.data[index].yandexDesktop.value.number
+          : parseInt(
+              b.data[selectedDateIndex][props.sortingKey].value.number
+                .toString()
+                .split('+')[0]
+            ) >
+            parseInt(
+              a.data[selectedDateIndex][props.sortingKey].value.number
+                .toString()
+                .split('+')[0]
+            )
           ? isDateSortIngAsc
             ? 1
             : -1
@@ -58,7 +72,8 @@ export default function Table({ rawData }) {
   const toggleSortSelectorVisibility = (e) => {
     setIsSortSelectorVisible(true);
     setSortSelectorCoordinates({ x: e.pageX, y: e.pageY });
-    toggleSort({ sortBy: 'date' }, e);
+    setSelectedDateIndex(e.target.id.split(',')[0]);
+    console.log(e.target.id.split(',')[0])
   };
   useEffect(() => {
     const dataArray = [];
@@ -163,7 +178,7 @@ export default function Table({ rawData }) {
           googleDesktop: {
             difference: null,
             value: {
-                isPresent:
+              isPresent:
                 googleDesktop.body.position[item.name] === false ||
                 googleDesktop.body.position[item.name]
                   ? true
@@ -180,7 +195,7 @@ export default function Table({ rawData }) {
           googleMobile: {
             difference: null,
             value: {
-                isPresent:
+              isPresent:
                 googleMobile.body.position[item.name] === false ||
                 googleMobile.body.position[item.name]
                   ? true
@@ -202,9 +217,15 @@ export default function Table({ rawData }) {
       tableItem.data.forEach((dataItem, index) => {
         if (tableItem.data[index - 1]) {
           Object.keys(dataItem).forEach((key) => {
-            if (dataItem[key].value  && tableItem.data[index - 1][key].value && dataItem[key].value.number && tableItem.data[index - 1][key].value.number) {
+            if (
+              dataItem[key].value &&
+              tableItem.data[index - 1][key].value &&
+              dataItem[key].value.number &&
+              tableItem.data[index - 1][key].value.number
+            ) {
               dataItem[key].difference =
-                tableItem.data[index - 1][key].value.number - dataItem[key].value.number || null;
+                tableItem.data[index - 1][key].value.number -
+                  dataItem[key].value.number || null;
             }
           });
         }
@@ -217,7 +238,35 @@ export default function Table({ rawData }) {
   }, [data]);
 
   useEffect(() => {
-    //  console.log(items);
+    let visibilityData = {};
+    for (let i = 0; i < items.length; i++) {
+      for (let j = 0; j < items[i].data.length; j++) {
+        visibilityData[items[i].data[j].date] = {
+          visibleAmount: 0,
+          totalAmount: 0,
+        };
+      }
+    }
+
+    for (let i = 0; i < items.length; i++) {
+      for (let j = 0; j < items[i].data.length; j++) {
+        for (let k = 1; k < Object.keys(items[i].data[j]).length; k++) {
+          if (
+            items[i].data[j][Object.keys(items[i].data[j])[k]].value.number <=
+            10
+          ) {
+            visibilityData[items[i].data[j].date].visibleAmount += 1;
+          }
+          if (
+            items[i].data[j][Object.keys(items[i].data[j])[k]].value.isPresent
+          ) {
+            visibilityData[items[i].data[j].date].totalAmount += 1;
+          }
+        }
+      }
+    }
+    setVisibility(visibilityData);
+    console.log(visibilityData);
   }, [items]);
 
   return (
@@ -227,7 +276,9 @@ export default function Table({ rawData }) {
           <tr className={styles.heading_container}>
             <th
               className={styles.heading}
-              onClick={(e) => toggleSort({ sortBy: 'name' }, e)}
+              onClick={(e) =>
+                toggleSort({ sortBy: 'name', sortingKey: null }, e)
+              }
             >
               Анкор
             </th>
@@ -240,15 +291,22 @@ export default function Table({ rawData }) {
                   id={`${index},${item.date}`}
                   onClick={toggleSortSelectorVisibility}
                 >
-                  {item.date}
-                  <div className={styles.sort_options}></div>
+                  <span id={`${index},${item.date}`}> {item.date}</span>{' '}
+                  {visibility[item.date] && (
+                    <div id={`${index},${item.date}`}>
+                      Видимость{' '}
+                      {((100 * visibility[item.date].visibleAmount) /
+                        visibility[item.date].totalAmount).toFixed(1)}
+                      %
+                    </div>
+                  )}
                 </th>
               ))}
           </tr>
         </thead>
         <tbody className={styles.body}>
-          {items.map((item) => (
-            <TableRow item={item} />
+          {items.map((item, index) => (
+            <TableRow key={index} item={item} />
           ))}
         </tbody>
       </table>
@@ -263,10 +321,39 @@ export default function Table({ rawData }) {
           <span className={styles.selector_heading}>
             Выберите поле для сортировки
           </span>
-          <span className={styles.option}>Я.desktop</span>
-          <span className={styles.option}>Я.mobile</span>
-          <span className={styles.option}>G.desktop</span>
-          <span className={styles.option}>G.mobile</span>
+          <span
+            className={styles.option}
+            onClick={(e) =>
+              toggleSort({ sortBy: 'date', sortingKey: 'yandexMobile' }, e)
+            }
+          >
+            Я.mobile
+          </span>
+          <span
+            className={styles.option}
+            onClick={(e) =>
+              toggleSort({ sortBy: 'date', sortingKey: 'yandexDesktop' }, e)
+            }
+          >
+            Я.desktop
+          </span>
+
+          <span
+            className={styles.option}
+            onClick={(e) =>
+              toggleSort({ sortBy: 'date', sortingKey: 'googleDesktop' }, e)
+            }
+          >
+            G.desktop
+          </span>
+          <span
+            className={styles.option}
+            onClick={(e) =>
+              toggleSort({ sortBy: 'date', sortingKey: 'googleMobile' }, e)
+            }
+          >
+            G.mobile
+          </span>
         </div>
       )}
     </section>

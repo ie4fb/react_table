@@ -17,6 +17,7 @@
   min-width: 100px;
   position: relative;
   cursor: pointer;
+  padding: 5px;
 }
 .heading:first-of-type {
   min-width: 200px;
@@ -28,6 +29,8 @@
 }
 .sort_heading {
     margin: 0;
+
+
 }
 .sort_selector {
     position: absolute;
