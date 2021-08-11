@@ -1,5 +1,5 @@
 import styles from './table.module.css';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import TableRow from './table-string';
 
 export default function Table({ rawData }) {
@@ -13,12 +13,22 @@ export default function Table({ rawData }) {
     x: 0,
     y: 0,
   });
+  const [pages, setPages] = useState([]);
+  const inputRef = useRef();
+
+  // Начальное значение элементов на странице
+  const [itemsPerPage, setItemsPerPage] = useState(20);
+
+  // Страница по-умолчанию
+  const [currentPage, setCurrentPage] = useState(1);
+
   const [visibility, setVisibility] = useState(null);
 
   const toggleSort = (props, e) => {
     setIsSortSelectorVisible(false);
     const arr = items;
     if (props.sortBy === 'name') {
+      //Сортировка по имени
       arr.sort((a, b) =>
         a.name > b.name
           ? isNamesSortAsc
@@ -33,8 +43,7 @@ export default function Table({ rawData }) {
       setItems(arr);
       setIsNamesSortAsc((prevState) => !prevState);
     } else if (props.sortBy === 'date') {
-        console.log(props)
-        console.log(arr); 
+      //Сортировка по дате
       arr.sort((a, b) =>
         parseInt(
           a.data[selectedDateIndex][props.sortingKey].value.number
@@ -73,7 +82,7 @@ export default function Table({ rawData }) {
     setIsSortSelectorVisible(true);
     setSortSelectorCoordinates({ x: e.pageX, y: e.pageY });
     setSelectedDateIndex(e.target.id.split(',')[0]);
-    console.log(e.target.id.split(',')[0])
+    console.log(e.target.id.split(',')[0]);
   };
   useEffect(() => {
     const dataArray = [];
@@ -267,8 +276,24 @@ export default function Table({ rawData }) {
     }
     setVisibility(visibilityData);
     console.log(visibilityData);
-  }, [items]);
+    const pages = Math.ceil(items.length / itemsPerPage);
+    const pagesArr = []
+    for (let i = 1; i <= pages; i++) {
+      pagesArr.push(i)
+    }
+    setPages(pagesArr);
+  }, [items, itemsPerPage]);
 
+  const changeItemsPerPage = () => {
+    setItemsPerPage(parseInt(inputRef.current.value));
+  };
+
+  const PageButton = ({item}) => {
+      return (
+        <button id={item} onClick={() => {setCurrentPage(item)}}className={`${styles.button} ${currentPage === item? styles.button_active : ''}`}>{item}</button>
+      )
+  }
+  
   return (
     <section className={styles.wrapper}>
       <table className={styles.container}>
@@ -295,8 +320,10 @@ export default function Table({ rawData }) {
                   {visibility[item.date] && (
                     <div id={`${index},${item.date}`}>
                       Видимость{' '}
-                      {((100 * visibility[item.date].visibleAmount) /
-                        visibility[item.date].totalAmount).toFixed(1)}
+                      {(
+                        (100 * visibility[item.date].visibleAmount) /
+                        visibility[item.date].totalAmount
+                      ).toFixed(1)}
                       %
                     </div>
                   )}
@@ -356,6 +383,27 @@ export default function Table({ rawData }) {
           </span>
         </div>
       )}
+      <div className={styles.pagination_container}>
+        <div className={styles.input_container}>
+          <span> Элементов на странице&nbsp;</span>
+          <input
+            type="number"
+            ref={inputRef}
+            className={styles.input}
+            placeholder={'Элементов на странице'}
+            defaultValue={itemsPerPage}
+          />
+          <button className={styles.button} onClick={changeItemsPerPage}>
+            Применить
+          </button>
+        </div>
+        <div className={styles.buttons}>
+          <button onClick={()=> setCurrentPage('Все')}className={`${styles.button} ${currentPage === "Все"? styles.button_active : ''}`}>Все</button>
+          {pages.map((item, index) => (
+           <PageButton item={item} key={index} />
+          ))}
+        </div>
+      </div>
     </section>
   );
 }
