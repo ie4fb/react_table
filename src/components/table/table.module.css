@@ -15,11 +15,45 @@
 .heading {
   border-bottom: 1px solid #bcd4dc;
   min-width: 100px;
+  position: relative;
+  cursor: pointer;
 }
 .heading:first-of-type {
   min-width: 200px;
   cursor: pointer;
 }
-.body {
+.sort_options {
+    top: -20px;
+    left: 20px;
+}
+.sort_heading {
+    margin: 0;
+}
+.sort_selector {
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+    background-color: #bcd4da;
+    padding: 5px 0 0 0;
+}
+.selector_heading {
+    margin-bottom: 5px;
+    font-weight: bold;
+    max-width: 150px;
+    text-align: center;
+    margin: 0 auto 10px auto;
+}
+.option {
+    padding: 10px 0;
+    width: 170px;
+    text-align: center;
+    cursor: pointer;
 
+}
+.option:hover {
+    background-color: #FFF;
+}
+
+.wrapper {
+    position: relative;
 }

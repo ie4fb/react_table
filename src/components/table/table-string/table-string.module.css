@@ -28,3 +28,8 @@
     color: #1f85ab;
     font-weight: bold;
 }
+.icon {
+    width: 8px;
+    height: 8px;
+    margin: auto 3px auto 5px;
+}

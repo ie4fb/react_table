@@ -5,12 +5,61 @@ import TableRow from './table-string';
 export default function Table({ rawData }) {
   const [data, setData] = useState([]);
   const [items, setItems] = useState([]);
-  const [reverse, setReverse] = useState(false);
+  const [isNamesSortAsc, setIsNamesSortAsc] = useState(true);
+  const [isSortSelectorVisible, setIsSortSelectorVisible] = useState(false);
+  const [isDateSortIngAsc, setIsDateSortIngAsc] = useState(false);
+  const [sortSelectorCoordinates, setSortSelectorCoordinates] = useState({
+    x: 0,
+    y: 0,
+  });
 
-  const toggleReverse = () => {
-    setReverse(prevState => !prevState);
+  const toggleSort = (props, e) => {
+    const arr = items;
+    if (props.sortBy === 'name') {
+      arr.sort((a, b) =>
+        a.name > b.name
+          ? isNamesSortAsc
+            ? -1
+            : 1
+          : b.name > a.name
+          ? isNamesSortAsc
+            ? 1
+            : -1
+          : 0
+      );
+      setItems(arr);
+      setIsNamesSortAsc((prevState) => !prevState);
+    } else if (props.sortBy === 'date') {
+      const index = e.target.id.split(',')[0];
+      const date = e.target.id.split(',')[1];
+      console.log(index, date);
+      console.log(items);
+      console.log(
+        arr[0].data[index].yandexDesktop.value.number,
+          arr[2].data[index].yandexDesktop.value.number
+      );
+      arr.sort((a, b) =>
+        a.data[index].yandexDesktop.value.number > b.data[index].yandexDesktop.value.number
+          ? isDateSortIngAsc
+            ? -1
+            : 1
+          : b.data[index].yandexDesktop.value.number >
+            a.data[index].yandexDesktop.value.number
+          ? isDateSortIngAsc
+            ? 1
+            : -1
+          : 0
+      );
+      setItems(arr);
+      setIsDateSortIngAsc((prevState) => !prevState);
+    }
   };
 
+  const toggleSortSelectorVisibility = (e) => {
+    setIsSortSelectorVisible(true);
+    setSortSelectorCoordinates({ x: e.pageX, y: e.pageY });
+    toggleSort({ sortBy: 'date' }, e);
+  };
   useEffect(() => {
     const dataArray = [];
     JSON.parse(rawData).forEach((item) => {
@@ -32,9 +81,7 @@ export default function Table({ rawData }) {
     anchorKeys = Array.from(new Set(anchorKeys));
 
     // Сортируем
-    anchorKeys.sort((a, b) =>
-      a > b ? (reverse ? -1 : 1) : b > a ? (reverse ? 1 : -1) : 0
-    );
+    anchorKeys.sort((a, b) => (a > b ? 1 : b > a ? -1 : 0));
 
     // Составляем массив со всеми датами и убираем дубли
     const datesArray = Array.from(new Set(data.map((item) => item.created_at)));
@@ -82,41 +129,69 @@ export default function Table({ rawData }) {
           date: date,
           yandexDesktop: {
             difference: null,
-            value:
-              yandexDesktop.body.position[item.name] === false
-                ? false
-                : yandexDesktop.body.position[item.name]
-                ? yandexDesktop.body.position[item.name]
-                : null,
+            value: {
+              isPresent:
+                yandexDesktop.body.position[item.name] === false ||
+                yandexDesktop.body.position[item.name]
+                  ? true
+                  : false,
+              number:
+                yandexDesktop.body.position[item.name] === false
+                  ? '100+'
+                  : yandexDesktop.body.position[item.name]
+                  ? yandexDesktop.body.position[item.name]
+                  : null,
+            },
           },
           yandexMobile: {
             difference: null,
-            value:
-              yandexMobile.body.position[item.name] === false
-                ? false
-                : yandexMobile.body.position[item.name]
-                ? yandexMobile.body.position[item.name]
-                : null,
+            value: {
+              isPresent:
+                yandexMobile.body.position[item.name] === false ||
+                yandexMobile.body.position[item.name]
+                  ? true
+                  : false,
+              number:
+                yandexMobile.body.position[item.name] === false
+                  ? '100+'
+                  : yandexMobile.body.position[item.name]
+                  ? yandexMobile.body.position[item.name]
+                  : null,
+            },
           },
 
           googleDesktop: {
             difference: null,
-            value:
-              googleDesktop.body.position[item.name] === false
-                ? false
-                : googleDesktop.body.position[item.name]
-                ? googleDesktop.body.position[item.name]
-                : null,
+            value: {
+                isPresent:
+                googleDesktop.body.position[item.name] === false ||
+                googleDesktop.body.position[item.name]
+                  ? true
+                  : false,
+              number:
+                googleDesktop.body.position[item.name] === false
+                  ? '100+'
+                  : googleDesktop.body.position[item.name]
+                  ? googleDesktop.body.position[item.name]
+                  : null,
+            },
           },
 
           googleMobile: {
             difference: null,
-            value:
-              googleMobile.body.position[item.name] === false
-                ? false
-                : googleMobile.body.position[item.name]
-                ? googleMobile.body.position[item.name]
-                : null,
+            value: {
+                isPresent:
+                googleMobile.body.position[item.name] === false ||
+                googleMobile.body.position[item.name]
+                  ? true
+                  : false,
+              number:
+                googleMobile.body.position[item.name] === false
+                  ? '100+'
+                  : googleMobile.body.position[item.name]
+                  ? googleMobile.body.position[item.name]
+                  : null,
+            },
           },
         });
       });
@@ -127,9 +202,9 @@ export default function Table({ rawData }) {
       tableItem.data.forEach((dataItem, index) => {
         if (tableItem.data[index - 1]) {
           Object.keys(dataItem).forEach((key) => {
-            if (dataItem[key].value && tableItem.data[index - 1][key].value) {
+            if (dataItem[key].value  && tableItem.data[index - 1][key].value && dataItem[key].value.number && tableItem.data[index - 1][key].value.number) {
               dataItem[key].difference =
-                tableItem.data[index - 1][key].value - dataItem[key].value;
+                tableItem.data[index - 1][key].value.number - dataItem[key].value.number || null;
             }
           });
         }
@@ -139,30 +214,61 @@ export default function Table({ rawData }) {
     // Вычисляем видимость
 
     setItems(tableItems);
-  }, [data, reverse]);
+  }, [data]);
 
   useEffect(() => {
     //  console.log(items);
   }, [items]);
 
   return (
-    <table className={styles.container}>
-      <thead>
-        <tr className={styles.heading_container}>
-          <th className={styles.heading} onClick={toggleReverse}>
-            Анкор
-          </th>
-          {items[0] &&
-            items[0].data.map((item) => (
-              <th className={styles.heading}>{item.date}</th>
-            ))}
-        </tr>
-      </thead>
-      <tbody className={styles.body}>
-        {items.map((item) => (
-          <TableRow item={item} />
-        ))}
-      </tbody>
-    </table>
+    <section className={styles.wrapper}>
+      <table className={styles.container}>
+        <thead>
+          <tr className={styles.heading_container}>
+            <th
+              className={styles.heading}
+              onClick={(e) => toggleSort({ sortBy: 'name' }, e)}
+            >
+              Анкор
+            </th>
+            {items[0] &&
+              items[0].data.map((item, index) => (
+                <th
+                  key={index}
+                  index={index}
+                  className={styles.heading}
+                  id={`${index},${item.date}`}
+                  onClick={toggleSortSelectorVisibility}
+                >
+                  {item.date}
+                  <div className={styles.sort_options}></div>
+                </th>
+              ))}
+          </tr>
+        </thead>
+        <tbody className={styles.body}>
+          {items.map((item) => (
+            <TableRow item={item} />
+          ))}
+        </tbody>
+      </table>
+      {isSortSelectorVisible && (
+        <div
+          style={{
+            top: sortSelectorCoordinates.y,
+            left: sortSelectorCoordinates.x,
+          }}
+          className={styles.sort_selector}
+        >
+          <span className={styles.selector_heading}>
+            Выберите поле для сортировки
+          </span>
+          <span className={styles.option}>Я.desktop</span>
+          <span className={styles.option}>Я.mobile</span>
+          <span className={styles.option}>G.desktop</span>
+          <span className={styles.option}>G.mobile</span>
+        </div>
+      )}
+    </section>
   );
 }
