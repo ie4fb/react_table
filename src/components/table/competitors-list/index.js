@@ -54,7 +54,7 @@ export default function CompetitorsList({ data }) {
         if (item && item.data) {
           Object.keys(item.data.body.host).forEach((key) => {
             item.topKeywords = item.topKeywords.concat(
-              item.data.body.host[key].slice(0, hostsNumber)
+              item.data.body.host[key]
             );
           });
         }
@@ -112,16 +112,15 @@ export default function CompetitorsList({ data }) {
         a.value > b.value ? -1 : b.value > a.value ? 1 : 0
       );
       setItems({
-        yandex: resultYandexArray.slice(0, hostsNumber),
-        google: resultGoogleArray.slice(0, hostsNumber),
+        yandex: resultYandexArray,
+        google: resultGoogleArray,
       });
     }
   }, [data, hostsNumber]);
 
-
   const changeHostsNumber = () => {
-      setHostsNumber(inputRef.current.value);
-  }
+    setHostsNumber(inputRef.current.value);
+  };
 
   return (
     <div className={styles.container}>
@@ -134,29 +133,43 @@ export default function CompetitorsList({ data }) {
           defaultValue={hostsNumber}
           ref={inputRef}
         />
-        <button className={styles.button} onClick={changeHostsNumber}>Показать</button>
+        <button className={styles.button} onClick={changeHostsNumber}>
+          Показать
+        </button>
       </div>
       <div className={styles.lists}>
         <div className={styles.list_container}>
           <p className={styles.list_heading}>Яндекс</p>
           <ul className={styles.list}>
-            {items && items.yandex.map((item, index) => (
-              <li key={item.key} className={styles.list_item}>
-                <span className={styles.host}>{index + 1}.&nbsp;{item.key}:</span>
-                <span className={styles.value}>{item.value}</span>
-              </li>
-            ))}
+            {items &&
+              items.yandex.map(
+                (item, index) =>
+                  index + 1 <= hostsNumber && (
+                    <li key={item.key} className={styles.list_item}>
+                      <span className={styles.host}>
+                        {index + 1}.&nbsp;{item.key}:
+                      </span>
+                      <span className={styles.value}>{item.value}</span>
+                    </li>
+                  )
+              )}
           </ul>
         </div>
         <div className={styles.list_container}>
           <p className={styles.list_heading}>Google</p>
           <ul className={styles.list}>
-            {items && items.google.map((item, index) => (
-              <li key={item.key} className={styles.list_item}>
-                <span className={styles.host}>{index + 1}.&nbsp;{item.key}</span>
-                <span className={styles.value}>{item.value}</span>
-              </li> 
-            ))}
+            {items &&
+              items.google.map(
+                (item, index) =>
+                  index + 1 <= hostsNumber && (
+                    <li key={item.key} className={styles.list_item}>
+                      <span className={styles.host}>
+                        {index + 1}.&nbsp;{item.key}:
+                      </span>
+                      <span className={styles.value}>{item.value}</span>
+                    </li>
+                  )
+              )}
           </ul>
         </div>
       </div>
