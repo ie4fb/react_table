@@ -277,9 +277,9 @@ export default function Table({ rawData }) {
     setVisibility(visibilityData);
     console.log(visibilityData);
     const pages = Math.ceil(items.length / itemsPerPage);
-    const pagesArr = []
+    const pagesArr = [];
     for (let i = 1; i <= pages; i++) {
-      pagesArr.push(i)
+      pagesArr.push(i);
     }
     setPages(pagesArr);
   }, [items, itemsPerPage]);
@@ -288,12 +288,22 @@ export default function Table({ rawData }) {
     setItemsPerPage(parseInt(inputRef.current.value));
   };
 
-  const PageButton = ({item}) => {
-      return (
-        <button id={item} onClick={() => {setCurrentPage(item)}}className={`${styles.button} ${currentPage === item? styles.button_active : ''}`}>{item}</button>
-      )
-  }
-  
+  const PageButton = ({ item }) => {
+    return (
+      <button
+        id={item}
+        onClick={() => {
+          setCurrentPage(item);
+        }}
+        className={`${styles.button} ${
+          currentPage === item ? styles.button_active : ''
+        }`}
+      >
+        {item}
+      </button>
+    );
+  };
+
   return (
     <section className={styles.wrapper}>
       <table className={styles.container}>
@@ -332,8 +342,14 @@ export default function Table({ rawData }) {
           </tr>
         </thead>
         <tbody className={styles.body}>
-          {items.map((item, index) => (
-            <TableRow key={index} item={item} />
+          {(currentPage === "Все" ? items : items.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage)).map((item, index) => (
+            <TableRow
+              currentPage={currentPage}
+              itemsPerPage={itemsPerPage}
+              index={index}
+              key={index}
+              item={item}
+            />
           ))}
         </tbody>
       </table>
@@ -387,7 +403,7 @@ export default function Table({ rawData }) {
         <div className={styles.input_container}>
           <span> Элементов на странице&nbsp;</span>
           <input
-            type="number"
+            type='number'
             ref={inputRef}
             className={styles.input}
             placeholder={'Элементов на странице'}
@@ -398,9 +414,16 @@ export default function Table({ rawData }) {
           </button>
         </div>
         <div className={styles.buttons}>
-          <button onClick={()=> setCurrentPage('Все')}className={`${styles.button} ${currentPage === "Все"? styles.button_active : ''}`}>Все</button>
+          <button
+            onClick={() => setCurrentPage('Все')}
+            className={`${styles.button} ${
+              currentPage === 'Все' ? styles.button_active : ''
+            }`}
+          >
+            Все
+          </button>
           {pages.map((item, index) => (
-           <PageButton item={item} key={index} />
+            <PageButton item={item} key={index} />
           ))}
         </div>
       </div>
