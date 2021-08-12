@@ -15,8 +15,9 @@ export default function Table({ rawData }) {
   });
   const [pages, setPages] = useState([]);
   const inputRef = useRef();
-  const dateFromInputRef       = useRef();
-  const dateToInputRef = useRef();
+
+  const dateToRef = useRef();
+  const dateFromRef = useRef();
 
   // Начальное значение элементов на странице
   const [itemsPerPage, setItemsPerPage] = useState(20);
@@ -25,6 +26,8 @@ export default function Table({ rawData }) {
   const [currentPage, setCurrentPage] = useState(1);
 
   const [visibility, setVisibility] = useState(null);
+
+  const [dateRange, setDateRange] = useState(null);
 
   const toggleSort = (props, e) => {
     setIsSortSelectorVisible(false);
@@ -110,7 +113,13 @@ export default function Table({ rawData }) {
     anchorKeys.sort((a, b) => (a > b ? 1 : b > a ? -1 : 0));
 
     // Составляем массив со всеми датами и убираем дубли
-    const datesArray = Array.from(new Set(data.map((item) => item.created_at)));
+    let datesArray = Array.from(new Set(data.map((item) => item.created_at)));
+
+    if (dateRange) {
+       datesArray = datesArray.filter((item) => item >= dateRange.from && item <= dateRange.to);
+    }
+
+    console.log(datesArray);
 
     // Сортируем
     datesArray.sort((a, b) => (a > b ? 1 : b > a ? -1 : 0));
@@ -246,7 +255,7 @@ export default function Table({ rawData }) {
     // Вычисляем видимость
 
     setItems(tableItems);
-  }, [data]);
+  }, [data, dateRange]);
 
   useEffect(() => {
     let visibilityData = {};
@@ -284,9 +293,26 @@ export default function Table({ rawData }) {
     }
     setPages(pagesArr);
   }, [items, itemsPerPage]);
+
+  const checkValidity = () => {
+    const dateFrom = new Date(dateFromRef.current.value).toLocaleDateString();
+    const dateTo = new Date(dateToRef.current.value).toLocaleDateString();
+    console.log(dateFrom, dateTo);
+    if (dateTo < dateFrom) {
+      dateFromRef.current.classList.add(styles.invalid);
+      dateToRef.current.classList.add(styles.invalid);
+    } else {
+      dateFromRef.current.classList.remove(styles.invalid);
+      dateToRef.current.classList.remove(styles.invalid);
+    }
+  };
   const applyDateFilter = () => {
-      console.log(dateFromInputRef.currrent, dateToInputRef.current)
-  }
+    const dateFrom = new Date(dateFromRef.current.value).toLocaleDateString();
+    const dateTo = new Date(dateToRef.current.value).toLocaleDateString();
+    if (dateTo >= dateFrom) {
+      setDateRange({ from: dateFrom, to: dateTo });
+    }
+  };
 
   const changeItemsPerPage = () => {
     setItemsPerPage(parseInt(inputRef.current.value));
@@ -312,10 +338,17 @@ export default function Table({ rawData }) {
     <section className={styles.wrapper}>
       <div className={styles.date_container}>
         <span>Начало периода&nbsp;</span>{' '}
-        <input ref={dateFromInputRef} id="from" type='date' />
+        <input
+          onChange={checkValidity}
+          ref={dateFromRef}
+          id='from'
+          type='date'
+        />
         <span>Конец периода&nbsp;</span>{' '}
-        <input ref={dateToInputRef} id="to" type='date' />
-        <button className={styles.button} onClick={applyDateFilter}>применить</button>
+        <input onChange={checkValidity} ref={dateToRef} id='to' type='date' />
+        <button className={styles.button} onClick={applyDateFilter}>
+          применить
+        </button>
       </div>
       <table className={styles.container}>
         <thead>
@@ -361,8 +394,7 @@ export default function Table({ rawData }) {
               )
           ).map((item, index) => (
             <TableRow
-              currentPage={currentPage}
-              itemsPerPage={itemsPerPage}
+              dateRange={dateRange}
               index={index}
               key={index}
               item={item}

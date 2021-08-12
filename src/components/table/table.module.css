@@ -88,3 +88,7 @@
     align-items: center;
     justify-content: center;
 }
+.invalid {
+    outline: 2px solid red;
+    color: red;
+}
