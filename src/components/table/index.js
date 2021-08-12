@@ -1,6 +1,7 @@
 import styles from './table.module.css';
 import { useState, useEffect, useRef } from 'react';
 import TableRow from './table-string';
+import CompetitorsList from './competitors-list';
 
 export default function Table({ rawData }) {
   const [data, setData] = useState([]);
@@ -87,7 +88,6 @@ export default function Table({ rawData }) {
     setIsSortSelectorVisible(true);
     setSortSelectorCoordinates({ x: e.pageX, y: e.pageY });
     setSelectedDateIndex(e.target.id.split(',')[0]);
-    console.log(e.target.id.split(',')[0]);
   };
   useEffect(() => {
     const dataArray = [];
@@ -118,10 +118,11 @@ export default function Table({ rawData }) {
     // Проверяем фильтр
 
     if (dateRange) {
-       datesArray = datesArray.filter((item) => item >= dateRange.from && item <= dateRange.to);
+      datesArray = datesArray.filter(
+        (item) => item >= dateRange.from && item <= dateRange.to
+      );
     }
 
-    console.log(datesArray);
 
     // Сортируем
     datesArray.sort((a, b) => (a > b ? 1 : b > a ? -1 : 0));
@@ -299,7 +300,6 @@ export default function Table({ rawData }) {
   const checkValidity = () => {
     const dateFrom = new Date(dateFromRef.current.value).toLocaleDateString();
     const dateTo = new Date(dateToRef.current.value).toLocaleDateString();
-    console.log(dateFrom, dateTo);
     if (dateTo < dateFrom) {
       dateFromRef.current.classList.add(styles.invalid);
       dateToRef.current.classList.add(styles.invalid);
@@ -396,12 +396,7 @@ export default function Table({ rawData }) {
                 currentPage * itemsPerPage
               )
           ).map((item, index) => (
-            <TableRow
-              dateRange={dateRange}
-              index={index}
-              key={index}
-              item={item}
-            />
+            <TableRow key={index} item={item} />
           ))}
         </tbody>
       </table>
@@ -480,6 +475,7 @@ export default function Table({ rawData }) {
           ))}
         </div>
       </div>
+      <CompetitorsList data={data} />
     </section>
   );
 }

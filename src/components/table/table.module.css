@@ -59,6 +59,7 @@
 
 .wrapper {
     position: relative;
+    padding: 8px 8px 30px 8px;
 }
 .button {
     cursor: pointer;

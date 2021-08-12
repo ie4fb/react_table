@@ -1,0 +1,47 @@
+.container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  margin-top: 50px;
+}
+.text {
+  margin: 0 10px 0 0;
+}
+.button {
+  background: #fff;
+}
+.input {
+  margin: 0 10px 0 0;
+}
+.controls {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.lists {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+}
+.list_container {
+  display: flex;
+  flex-direction: column;
+}
+.list_heading {
+  font-weight: bold;
+}
+.list {
+  list-style: none;
+}
+.list_item {
+  display: flex;
+  justify-content: space-between;
+  margin: 10px 0 0 0;;
+
+  border-bottom: 1px solid black
+}
+.host {
+    margin: 0 20px 0 0;
+}

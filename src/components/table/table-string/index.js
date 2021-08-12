@@ -1,5 +1,5 @@
 import styles from './table-string.module.css';
-export default function TableRow({ item, currentPage, itemsPerPage, index }) {
+export default function TableRow({ item }) {
   const greenIconSrc =
     'https://ci3.googleusercontent.com/proxy/1m0nAJujhv2WsAI2v0bATa7ehyoIaRh9OMFk2trZjBdhSjvsVetba-KSE7fAZaOEz_-VZqXhelwzhvwL3WkMFxZBkRaj8gZCzw_kc_s=s0-d-e1-ft#https://gogetlinks.net/src/images/icons/delta/up-arrow.png';
   const redIconSrc =
