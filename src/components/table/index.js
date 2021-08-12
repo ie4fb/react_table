@@ -15,6 +15,8 @@ export default function Table({ rawData }) {
   });
   const [pages, setPages] = useState([]);
   const inputRef = useRef();
+  const dateFromInputRef       = useRef();
+  const dateToInputRef = useRef();
 
   // Начальное значение элементов на странице
   const [itemsPerPage, setItemsPerPage] = useState(20);
@@ -275,7 +277,6 @@ export default function Table({ rawData }) {
       }
     }
     setVisibility(visibilityData);
-    console.log(visibilityData);
     const pages = Math.ceil(items.length / itemsPerPage);
     const pagesArr = [];
     for (let i = 1; i <= pages; i++) {
@@ -283,6 +284,9 @@ export default function Table({ rawData }) {
     }
     setPages(pagesArr);
   }, [items, itemsPerPage]);
+  const applyDateFilter = () => {
+      console.log(dateFromInputRef.currrent, dateToInputRef.current)
+  }
 
   const changeItemsPerPage = () => {
     setItemsPerPage(parseInt(inputRef.current.value));
@@ -306,6 +310,13 @@ export default function Table({ rawData }) {
 
   return (
     <section className={styles.wrapper}>
+      <div className={styles.date_container}>
+        <span>Начало периода&nbsp;</span>{' '}
+        <input ref={dateFromInputRef} id="from" type='date' />
+        <span>Конец периода&nbsp;</span>{' '}
+        <input ref={dateToInputRef} id="to" type='date' />
+        <button className={styles.button} onClick={applyDateFilter}>применить</button>
+      </div>
       <table className={styles.container}>
         <thead>
           <tr className={styles.heading_container}>
@@ -342,7 +353,13 @@ export default function Table({ rawData }) {
           </tr>
         </thead>
         <tbody className={styles.body}>
-          {(currentPage === "Все" ? items : items.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage)).map((item, index) => (
+          {(currentPage === 'Все'
+            ? items
+            : items.slice(
+                (currentPage - 1) * itemsPerPage,
+                currentPage * itemsPerPage
+              )
+          ).map((item, index) => (
             <TableRow
               currentPage={currentPage}
               itemsPerPage={itemsPerPage}
@@ -408,6 +425,7 @@ export default function Table({ rawData }) {
             className={styles.input}
             placeholder={'Элементов на странице'}
             defaultValue={itemsPerPage}
+            min={1}
           />
           <button className={styles.button} onClick={changeItemsPerPage}>
             Применить

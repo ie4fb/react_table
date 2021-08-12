@@ -81,3 +81,10 @@
 .input_container {
     margin-top: 10px;
 }
+.date_container {
+    gap: 10px;
+    display: flex;
+    margin: 10px auto 10px auto;
+    align-items: center;
+    justify-content: center;
+}
