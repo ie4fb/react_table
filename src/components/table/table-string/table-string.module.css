@@ -9,6 +9,7 @@
 }
 .cell {
     text-align: center;
+    height: 92px;
 }
 .data {
     text-align: center;

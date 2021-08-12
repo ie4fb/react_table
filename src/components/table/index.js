@@ -115,6 +115,8 @@ export default function Table({ rawData }) {
     // Составляем массив со всеми датами и убираем дубли
     let datesArray = Array.from(new Set(data.map((item) => item.created_at)));
 
+    // Проверяем фильтр
+
     if (dateRange) {
        datesArray = datesArray.filter((item) => item >= dateRange.from && item <= dateRange.to);
     }
@@ -316,6 +318,7 @@ export default function Table({ rawData }) {
 
   const changeItemsPerPage = () => {
     setItemsPerPage(parseInt(inputRef.current.value));
+    setCurrentPage(1);
   };
 
   const PageButton = ({ item }) => {
