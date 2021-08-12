@@ -350,7 +350,7 @@ export default function Table({ rawData }) {
         <span>Конец периода&nbsp;</span>{' '}
         <input onChange={checkValidity} ref={dateToRef} id='to' type='date' />
         <button className={styles.button} onClick={applyDateFilter}>
-          применить
+          Применить
         </button>
       </div>
       <table className={styles.container}>
