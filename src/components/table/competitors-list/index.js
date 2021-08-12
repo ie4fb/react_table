@@ -140,9 +140,9 @@ export default function CompetitorsList({ data }) {
         <div className={styles.list_container}>
           <p className={styles.list_heading}>Яндекс</p>
           <ul className={styles.list}>
-            {items && items.yandex.map((item) => (
+            {items && items.yandex.map((item, index) => (
               <li key={item.key} className={styles.list_item}>
-                <span className={styles.host}>{item.key}:</span>
+                <span className={styles.host}>{index + 1}.&nbsp;{item.key}:</span>
                 <span className={styles.value}>{item.value}</span>
               </li>
             ))}
@@ -151,9 +151,9 @@ export default function CompetitorsList({ data }) {
         <div className={styles.list_container}>
           <p className={styles.list_heading}>Google</p>
           <ul className={styles.list}>
-            {items && items.google.map((item) => (
+            {items && items.google.map((item, index) => (
               <li key={item.key} className={styles.list_item}>
-                <span className={styles.host}>{item.key}</span>
+                <span className={styles.host}>{index + 1}.&nbsp;{item.key}</span>
                 <span className={styles.value}>{item.value}</span>
               </li> 
             ))}
