@@ -262,12 +262,13 @@ export default function Table({ rawData }) {
       });
     });
 
-    // Вычисляем видимость
+
 
     setItems(tableItems);
   }, [data, dateRange]);
 
   useEffect(() => {
+   // Вычисляем видимость
     let visibilityData = {};
     for (let i = 0; i < items.length; i++) {
       for (let j = 0; j < items[i].data.length; j++) {
@@ -283,7 +284,8 @@ export default function Table({ rawData }) {
         for (let k = 1; k < Object.keys(items[i].data[j]).length; k++) {
           if (
             items[i].data[j][Object.keys(items[i].data[j])[k]].value.number <=
-            10
+            10 && items[i].data[j][Object.keys(items[i].data[j])[k]].value.number !== null
+           
           ) {
             visibilityData[items[i].data[j].date].visibleAmount += 1;
           }
