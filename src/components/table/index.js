@@ -105,6 +105,7 @@ export default function Table({ rawData }) {
     data.map((item) =>
       Object.keys(item.body.host).forEach((key) => anchorKeys.push(key))
     );
+    console.log(data);
 
     // Убираем дубли
     anchorKeys = Array.from(new Set(anchorKeys));
@@ -122,7 +123,6 @@ export default function Table({ rawData }) {
         (item) => item >= dateRange.from && item <= dateRange.to
       );
     }
-
 
     // Сортируем
     datesArray.sort((a, b) => (a > b ? 1 : b > a ? -1 : 0));
@@ -168,67 +168,75 @@ export default function Table({ rawData }) {
           yandexDesktop: {
             difference: null,
             value: {
-              isPresent:
-                yandexDesktop.body.position[item.name] === false ||
-                yandexDesktop.body.position[item.name]
+              isPresent: yandexDesktop
+                ? yandexDesktop.body.position[item.name] === false ||
+                  yandexDesktop.body.position[item.name]
                   ? true
-                  : false,
-              number:
-                yandexDesktop.body.position[item.name] === false
+                  : false
+                : false,
+              number: yandexDesktop
+                ? yandexDesktop.body.position[item.name] === false
                   ? '100+'
                   : yandexDesktop.body.position[item.name]
                   ? yandexDesktop.body.position[item.name]
-                  : null,
+                  : null
+                : null,
             },
           },
           yandexMobile: {
             difference: null,
             value: {
-              isPresent:
-                yandexMobile.body.position[item.name] === false ||
-                yandexMobile.body.position[item.name]
+              isPresent: yandexMobile
+                ? yandexMobile.body.position[item.name] === false ||
+                  yandexMobile.body.position[item.name]
                   ? true
-                  : false,
-              number:
-                yandexMobile.body.position[item.name] === false
+                  : false
+                : false,
+              number: yandexMobile
+                ? yandexMobile.body.position[item.name] === false
                   ? '100+'
                   : yandexMobile.body.position[item.name]
                   ? yandexMobile.body.position[item.name]
-                  : null,
+                  : null
+                : null,
             },
           },
 
           googleDesktop: {
             difference: null,
             value: {
-              isPresent:
-                googleDesktop.body.position[item.name] === false ||
-                googleDesktop.body.position[item.name]
+              isPresent: googleDesktop
+                ? googleDesktop.body.position[item.name] === false ||
+                  googleDesktop.body.position[item.name]
                   ? true
-                  : false,
-              number:
-                googleDesktop.body.position[item.name] === false
+                  : false
+                : false,
+              number: googleDesktop
+                ? googleDesktop.body.position[item.name] === false
                   ? '100+'
                   : googleDesktop.body.position[item.name]
                   ? googleDesktop.body.position[item.name]
-                  : null,
+                  : null
+                : null,
             },
           },
 
           googleMobile: {
             difference: null,
             value: {
-              isPresent:
-                googleMobile.body.position[item.name] === false ||
-                googleMobile.body.position[item.name]
+              isPresent: googleMobile
+                ? googleMobile.body.position[item.name] === false ||
+                  googleMobile.body.position[item.name]
                   ? true
-                  : false,
-              number:
-                googleMobile.body.position[item.name] === false
+                  : false
+                : false,
+              number: googleMobile
+                ? googleMobile.body.position[item.name] === false
                   ? '100+'
                   : googleMobile.body.position[item.name]
                   ? googleMobile.body.position[item.name]
-                  : null,
+                  : null
+                : null,
             },
           },
         });

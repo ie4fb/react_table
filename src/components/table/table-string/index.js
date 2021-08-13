@@ -1,5 +1,6 @@
 import styles from './table-string.module.css';
 export default function TableRow({ item }) {
+  console.log(item);
   const greenIconSrc =
     'https://ci3.googleusercontent.com/proxy/1m0nAJujhv2WsAI2v0bATa7ehyoIaRh9OMFk2trZjBdhSjvsVetba-KSE7fAZaOEz_-VZqXhelwzhvwL3WkMFxZBkRaj8gZCzw_kc_s=s0-d-e1-ft#https://gogetlinks.net/src/images/icons/delta/up-arrow.png';
   const redIconSrc =
@@ -10,7 +11,7 @@ export default function TableRow({ item }) {
       {item.data.map((item, index) => (
         <td key={index} className={styles.cell}>
           <div className={styles.data}>
-            {item.yandexDesktop.value.isPresent && (
+            {item.yandexMobile.value.isPresent && (
               <p className={styles.item}>
                 <span className={styles.item_heading_y}>Я.mobile:&nbsp;</span>
                 {item.yandexMobile.value.number}
@@ -30,7 +31,7 @@ export default function TableRow({ item }) {
                 )}
               </p>
             )}
-            {item.yandexMobile.value.isPresent && (
+            {item.yandexDesktop.value.isPresent && (
               <p className={styles.item}>
                 <span className={styles.item_heading_y}>Я.desktop:&nbsp;</span>
                 {item.yandexDesktop.value.number}
