@@ -105,7 +105,6 @@ export default function Table({ rawData }) {
     data.map((item) =>
       Object.keys(item.body.host).forEach((key) => anchorKeys.push(key))
     );
-    console.log(data);
 
     // Убираем дубли
     anchorKeys = Array.from(new Set(anchorKeys));
